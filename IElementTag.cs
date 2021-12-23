@@ -12,16 +12,16 @@ using System.Windows;
 
 #endregion
 
-namespace MVVMUtils {
+namespace MVVMUtils; 
+
+/// <summary>
+/// Represents a known tag for <see cref="FrameworkElement"/>s.
+/// </summary>
+public interface IElementTag {
 	/// <summary>
-	/// Represents a known tag for <see cref="FrameworkElement"/>s.
+	/// Invoked on all <see cref="FrameworkElement"/>s when the containing window loads.
 	/// </summary>
-	public interface IElementTag {
-		/// <summary>
-		/// Invoked on all <see cref="FrameworkElement"/>s when the containing window loads.
-		/// </summary>
-		/// <param name="Sender">The element which loaded.</param>
-		/// <param name="Container">The container which loaded the element.</param>
-		void Loaded( FrameworkElement Sender, FrameworkElement Container );
-	}
+	/// <param name="Sender">The element which loaded.</param>
+	/// <param name="Container">The container which loaded the element.</param>
+	void Loaded( FrameworkElement Sender, FrameworkElement Container );
 }

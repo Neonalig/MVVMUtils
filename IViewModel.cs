@@ -12,10 +12,16 @@ using System.ComponentModel;
 
 #endregion
 
-namespace MVVMUtils {
-	/// <summary> Represents the VM in the MVVM model. </summary>
-	/// <typeparam name="TView">The view type.</typeparam>
-	public interface IViewModel<out TView> : INotifyPropertyChanging, INotifyPropertyChanged {
-		public TView View { get; }
-	}
+namespace MVVMUtils; 
+
+/// <summary> Represents the VM in the MVVM model. </summary>
+/// <typeparam name="TView">The view type.</typeparam>
+public interface IViewModel<out TView> : INotifyPropertyChanging, INotifyPropertyChanged {
+	/// <summary>
+	/// Gets the view.
+	/// </summary>
+	/// <value>
+	/// The view.
+	/// </value>
+	public TView View { get; }
 }

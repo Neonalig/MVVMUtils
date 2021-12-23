@@ -13,28 +13,28 @@ using System.Windows;
 
 #endregion
 
-namespace MVVMUtils {
+namespace MVVMUtils; 
+
+/// <summary>
+/// Converts <see langword="bool"/> values to <see cref="Visibility"/>.
+/// </summary>
+public class BooleanToVisibilityConverter : ValueConverter<bool, Visibility> {
 	/// <summary>
-	/// Converts <see langword="bool"/> values to <see cref="Visibility"/>.
+	/// The <see cref="Visibility"/> to return when the given boolean is <see langword="true"/>.
 	/// </summary>
-	public class BooleanToVisibilityConverter : ValueConverter<bool, Visibility> {
-		/// <summary>
-		/// The <see cref="Visibility"/> to return when the given boolean is <see langword="true"/>.
-		/// </summary>
-		public Visibility True { get; set; } = Visibility.Visible;
+	public Visibility True { get; set; } = Visibility.Visible;
 
-		/// <summary>
-		/// The <see cref="Visibility"/> to return when the given boolean is <see langword="false"/>.
-		/// </summary>
-		public Visibility False { get; set; } = Visibility.Collapsed;
+	/// <summary>
+	/// The <see cref="Visibility"/> to return when the given boolean is <see langword="false"/>.
+	/// </summary>
+	public Visibility False { get; set; } = Visibility.Collapsed;
 
-		/// <inheritdoc />
-		public override bool CanReverse => true;
+	/// <inheritdoc />
+	public override bool CanReverse => true;
 
-		/// <inheritdoc />
-		public override Visibility Forward( bool From, object? Parameter = null, CultureInfo? Culture = null ) => From ? True : False;
+	/// <inheritdoc />
+	public override Visibility Forward( bool From, object? Parameter = null, CultureInfo? Culture = null ) => From ? True : False;
 
-		/// <inheritdoc />
-		public override bool Reverse( Visibility To, object? Parameter = null, CultureInfo? Culture = null ) => To == True;
-	}
+	/// <inheritdoc />
+	public override bool Reverse( Visibility To, object? Parameter = null, CultureInfo? Culture = null ) => To == True;
 }
