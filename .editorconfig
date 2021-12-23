@@ -1,0 +1,25 @@
+﻿[*.cs]
+
+# IDE0023: Use block body for operators
+csharp_style_expression_bodied_operators = when_on_single_line
+
+# IDE0040: Add accessibility modifiers
+dotnet_style_require_accessibility_modifiers = omit_if_default
+
+# RXRA001: Property can be expanded
+dotnet_diagnostic.RXRA001.severity = none
+
+# IDE0010: Add missing cases
+dotnet_diagnostic.IDE0010.severity = none
+
+# CA1707: Identifiers should not contain underscores
+dotnet_diagnostic.CA1707.severity = none
+
+# IDE0072: Add missing cases
+dotnet_diagnostic.IDE0072.severity = none
+
+# CA1725: Parameter names should match base declaration
+dotnet_diagnostic.CA1725.severity = none
+
+# RXRA003: Property can be expanded
+dotnet_diagnostic.RXRA003.severity = none

@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="MVVMUtils.Controls\**" />
+    <EmbeddedResource Remove="MVVMUtils.Controls\**" />
+    <None Remove="MVVMUtils.Controls\**" />
+    <Page Remove="MVVMUtils.Controls\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="TestReactive.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="TestReactive.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fody" Version="6.5.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="JetBrains.Annotations" Version="2021.2.0" />
+    <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.0" />
+    <PackageReference Include="PropertyChanged.Fody" Version="3.4.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+	  <PackageReference Include="ReactiveUI" Version="16.2.6" />
+  </ItemGroup>
+
+</Project>
