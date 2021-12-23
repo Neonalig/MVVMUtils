@@ -1,1 +1,27 @@
-MVVMUtils
+# MVVMUtils
+ 
+
+Simple utilities to ease implementation of the MVVM (Model, View, ViewModel) pattern in WPF applications.
+
+
+## Classes
+&nbsp;<table><tr><th></th><th>Class</th><th>Description</th></tr><tr><td>![Public class](../../wiki/media/pubclass.gif "Public class")</td><td><a href="../../wiki/01575ade-023d-9a2d-1b44-daead45e9bed">BooleanToVisibilityConverter</a></td><td>
+Converts `bool` values to <a href="../../wiki/https://docs.microsoft.com/dotnet/api/system.windows.visibility" target="_blank" rel="noopener noreferrer">Visibility</a>.</td></tr><tr><td>![Public class](../../wiki/media/pubclass.gif "Public class")</td><td><a href="../../wiki/87f2f429-1d4b-5397-8cda-aa40dde40559">ComparableObservable(T)</a></td><td>
+Represents a singular observed property with <a href="../../wiki/https://docs.microsoft.com/dotnet/api/system.icomparable-1" target="_blank" rel="noopener noreferrer">IComparable(T)</a> support.</td></tr><tr><td>![Public class](../../wiki/media/pubclass.gif "Public class")</td><td><a href="../../wiki/fb70bea3-7945-28f2-f89f-c1f9090922cc">Extensions</a></td><td>
+General MVVM extensions for function shorthands.</td></tr><tr><td>![Public class](../../wiki/media/pubclass.gif "Public class")</td><td><a href="../../wiki/9b02ca08-707d-8bb2-d3b4-daf82d1d0777">Observable(T)</a></td><td>
+Represents a singular observed property.</td></tr><tr><td>![Public class](../../wiki/media/pubclass.gif "Public class")</td><td><a href="../../wiki/cc24299e-b6df-2929-4e4a-58257f7f44e8">PropertyChangedNotificationInterceptor</a></td><td>
+See the: <a href="../../wiki/https://github.com/Fody/PropertyChanged/../../wiki/NotificationInterception" target="_blank" rel="noopener noreferrer">PropertyChangedNotificationInterceptor.cs</a> example on GitHub.</td></tr><tr><td>![Public class](../../wiki/media/pubclass.gif "Public class")</td><td><a href="../../wiki/1a1475b7-dffe-4db1-1fa7-93d80135d903">Reactive</a></td><td>
+Represents a `base object` supporting automatic <a href="../../wiki/https://docs.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanging" target="_blank" rel="noopener noreferrer">INotifyPropertyChanging</a> and <a href="../../wiki/https://docs.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged" target="_blank" rel="noopener noreferrer">INotifyPropertyChanged</a> callbacks via <a href="../../wiki/https://github.com/reactiveui/ReactiveUI" target="_blank" rel="noopener noreferrer">ReactiveUI</a> and <a href="../../wiki/https://github.com/Fody/PropertyChanged" target="_blank" rel="noopener noreferrer">Fody.PropertyChanged</a>.</td></tr><tr><td>![Public class](../../wiki/media/pubclass.gif "Public class")</td><td><a href="../../wiki/25e135c9-9f66-9db5-8d38-779c1ef942a3">ReverseValueConverter(TFrom, TTo)</a></td><td>
+Represents the functional inverse of a given <a href="../../wiki/947af247-4288-a25b-3dfa-3af006b419d7">ValueConverter(TFrom, TTo)</a>.</td></tr><tr><td>![Public class](../../wiki/media/pubclass.gif "Public class")</td><td><a href="../../wiki/e623355c-7991-c981-9e01-5c8d75949410">ReverseValueConverter(T, TFrom, TTo)</a></td><td>
+Represents the functional inverse of a given <a href="../../wiki/947af247-4288-a25b-3dfa-3af006b419d7">ValueConverter(TFrom, TTo)</a>. <br />Based on a specific converter type.</td></tr><tr><td>![Public class](../../wiki/media/pubclass.gif "Public class")</td><td><a href="../../wiki/7e4f0fcb-e6b9-4c82-a8dc-09459517057c">SpecificElementConverter</a></td><td>
+Retrieves a specific element in a specific collection.</td></tr><tr><td>![Public class](../../wiki/media/pubclass.gif "Public class")</td><td><a href="../../wiki/947af247-4288-a25b-3dfa-3af006b419d7">ValueConverter(TFrom, TTo)</a></td><td>
+A typed value converter with possible support for forwards, forwards (a null reference (`Nothing` in Visual Basic)), reverse, and reverse (a null reference (`Nothing` in Visual Basic)) conversions.</td></tr><tr><td>![Public class](../../wiki/media/pubclass.gif "Public class")</td><td><a href="../../wiki/3d309720-4459-ee48-077f-88cb4bb36ed9">ViewModel(TView)</a></td><td>
+Represents the VM in the MVVM model.</td></tr><tr><td>![Public class](../../wiki/media/pubclass.gif "Public class")</td><td><a href="../../wiki/32230809-2e45-13c6-b3f4-682c46385e9f">ViewModel(TView, TModel)</a></td><td>
+Represents the VM in the MVVM model.</td></tr></table>
+
+## Interfaces
+&nbsp;<table><tr><th></th><th>Interface</th><th>Description</th></tr><tr><td>![Public interface](../../wiki/media/pubinterface.gif "Public interface")</td><td><a href="../../wiki/62ddee1d-66e9-11f8-aecf-37b09dced9ec">IElementTag</a></td><td>
+Represents a known tag for <a href="../../wiki/https://docs.microsoft.com/dotnet/api/system.windows.frameworkelement" target="_blank" rel="noopener noreferrer">FrameworkElement</a>s.</td></tr><tr><td>![Public interface](../../wiki/media/pubinterface.gif "Public interface")</td><td><a href="../../wiki/5dc16341-5d3c-4f99-bef2-4971116f8de8">IView(T)</a></td><td>
+Represents a view which uses a <a href="../../wiki/3d309720-4459-ee48-077f-88cb4bb36ed9">ViewModel(TView)</a>.</td></tr><tr><td>![Public interface](../../wiki/media/pubinterface.gif "Public interface")</td><td><a href="../../wiki/0635797a-4301-4eea-2941-9732e80bdea2">IView(TViewModel, TModel)</a></td><td>
+Represents a view which uses a <a href="../../wiki/3d309720-4459-ee48-077f-88cb4bb36ed9">ViewModel(TView)</a>.</td></tr><tr><td>![Public interface](../../wiki/media/pubinterface.gif "Public interface")</td><td><a href="../../wiki/af4b08bb-930f-d3c6-1f86-ddb57a077611">IViewModel(TView)</a></td><td>
+Represents the VM in the MVVM model.</td></tr></table>&nbsp;
