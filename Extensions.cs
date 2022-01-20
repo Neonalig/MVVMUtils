@@ -17,6 +17,7 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup.Primitives;
@@ -483,6 +484,39 @@ public static class Extensions {
 	public static IEnumerable<DependencyProperty> GetDependencyProperties( this DependencyProperty DPObject, bool OnlyAttached = false ) => GetDependencyProperties(ObjElement: DPObject, OnlyAttached);
 
 	/// <summary>
+	/// Gets the dependency property.
+	/// </summary>
+	/// <typeparam name="T">The property value type.</typeparam>
+	/// <param name="DOObject">The dependency object.</param>
+	/// <param name="DPName">The name of the dependency property.</param>
+	/// <param name="OnlyAttached"><inheritdoc cref="GetDependencyProperties(object, bool)"/></param>
+	/// <returns>The found dependency property, or <see langword="null"/>.</returns>
+	public static TypedDependencyProperty<T>? GetDependencyProperty<T>( this DependencyObject DOObject, string DPName, bool OnlyAttached = false ) {
+		// ReSharper disable once LoopCanBePartlyConvertedToQuery
+		foreach ( DependencyProperty Property in DOObject.GetDependencyProperties(OnlyAttached) ) {
+			if ( Property.Name == DPName ) {
+				if ( Property.PropertyType.IsAssignableFrom(typeof(T)) ) {
+					return new TypedDependencyProperty<T>(Property);
+				}
+			}
+		}
+		return null;
+	}
+
+
+	/// <summary>
+	/// Gets the dependency property.
+	/// </summary>
+	/// <typeparam name="T">The property value type.</typeparam>
+	/// <param name="DOObject">The dependency object.</param>
+	/// <param name="PropertyReference">A reference to the dependency property.</param>
+	/// <param name="OnlyAttached"><inheritdoc cref="GetDependencyProperties(object, bool)"/></param>
+	/// <param name="PropertyName">The name of the dependency property.</param>
+	/// <returns>The found dependency property, or <see langword="null"/>.</returns>
+	[SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used by attributes")]
+	public static TypedDependencyProperty<T>? GetDependencyProperty<T>( this DependencyObject DOObject, T PropertyReference, bool OnlyAttached = false, [CallerArgumentExpression("PropertyReference")] string PropertyName = "" ) => GetDependencyProperty<T>(DOObject, LastField(PropertyName), OnlyAttached);
+
+	/// <summary>
 	/// Attempts to find the children element of type <typeparamref name="T"/> with the given <paramref name="ChildName"/>.
 	/// </summary>
 	/// <typeparam name="T">The child type to search for.</typeparam>
@@ -508,4 +542,142 @@ public static class Extensions {
 		NotNull = Value;
 		return true;
 	}
+
+	/// <summary>
+	/// Gets all text after the last period (.) symbol.
+	/// </summary>
+	/// <param name="Expression">The expression.</param>
+	/// <returns>The substring.</returns>
+	[return: NotNullIfNotNull(nameof(Expression))]
+	internal static string? LastField( string? Expression ) => Expression?[(Expression.LastIndexOf('.') + 1)..];
+
+	/// <inheritdoc cref="TypedDependencyProperty{T}.Set(DependencyObject, T)"/>
+	/// <typeparam name="T">The property value type.</typeparam>
+	/// <param name="Object">The dependency object.</param>
+	/// <param name="PropertyReference">A reference to the dependency property.</param>
+	/// <param name="Value">The new value.</param>
+	/// <param name="PropertyName">The name of the dependency property.</param>
+	[SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used by attributes")]
+	public static void SetValue<T>( this DependencyObject Object, T PropertyReference, T Value, [CallerArgumentExpression("PropertyReference")] string PropertyName = "") => SetValue(Object, Object.GetDependencyProperty<T>(LastField(PropertyName))!, Value);
+
+
+	/// <inheritdoc cref="TypedDependencyProperty{T}.Get(DependencyObject)"/>
+	/// <typeparam name="T">The property value type.</typeparam>
+	/// <param name="Object">The dependency object.</param>
+	/// <param name="PropertyReference">A reference to the dependency property.</param>
+	/// <param name="PropertyName">The name of the dependency property.</param>
+	[SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used by attributes")]
+	public static T GetValue<T>( this DependencyObject Object, T PropertyReference, [CallerArgumentExpression("PropertyReference")] string PropertyName = "" ) => GetValue<T>(Object, Object.GetDependencyProperty<T>(LastField(PropertyName))!);
+
+	/// <inheritdoc cref="TypedDependencyProperty{T}.Set(DependencyObject, T)"/>
+	/// <typeparam name="T">The property value type.</typeparam>
+	/// <param name="Object">The dependency object.</param>
+	/// <param name="Property">The dependency property.</param>
+	/// <param name="Value">The new value.</param>
+	public static void SetValue<T>( this DependencyObject Object, DependencyProperty Property, T Value ) => SetValue(Object, new TypedDependencyProperty<T>(Property), Value);
+
+	/// <inheritdoc cref="TypedDependencyProperty{T}.Get(DependencyObject)"/>
+	/// <typeparam name="T">The property value type.</typeparam>
+	/// <param name="Object">The dependency object.</param>
+	/// <param name="Property">The dependency property.</param>
+	public static T GetValue<T>( this DependencyObject Object, DependencyProperty Property ) => GetValue(Object, new TypedDependencyProperty<T>(Property));
+
+	/// <inheritdoc cref="TypedDependencyProperty{T}.Set(DependencyObject, T)"/>
+	/// <typeparam name="T">The property value type.</typeparam>
+	/// <param name="Object">The dependency object.</param>
+	/// <param name="Property">The dependency property.</param>
+	/// <param name="Value">The new value.</param>
+	public static void SetValue<T>( this DependencyObject Object, TypedDependencyProperty<T> Property, T Value ) => Property.Set(Object, Value);
+
+	/// <inheritdoc cref="TypedDependencyProperty{T}.Get(DependencyObject)"/>
+	/// <typeparam name="T">The property value type.</typeparam>
+	/// <param name="Object">The dependency object.</param>
+	/// <param name="Property">The dependency property.</param>
+	public static T GetValue<T>( this DependencyObject Object, TypedDependencyProperty<T> Property ) => Property.Get(Object);
+
+	/// <summary>
+	/// Gets the developer-friendly short-name/alias of the type.
+	/// </summary>
+	/// <param name="Type">The type.</param>
+	/// <returns>The alias/name of the type.</returns>
+	public static string GetTypeName( this Type Type ) => Type.GetTypeCode(Type) switch {
+		TypeCode.Empty    => "<null>",
+		TypeCode.Object   => Type.Name,
+		TypeCode.DBNull   => nameof(DBNull),
+		TypeCode.Boolean  => "bool",
+		TypeCode.Char     => "char",
+		TypeCode.SByte    => "sbyte",
+		TypeCode.Byte     => "byte",
+		TypeCode.Int16    => "short",
+		TypeCode.UInt16   => "ushort",
+		TypeCode.Int32    => "int",
+		TypeCode.UInt32   => "uint",
+		TypeCode.Int64    => "long",
+		TypeCode.UInt64   => "ulong",
+		TypeCode.Single   => "float",
+		TypeCode.Double   => "double",
+		TypeCode.Decimal  => "decimal",
+		TypeCode.DateTime => nameof(DateTime),
+		TypeCode.String   => "string",
+		_                 => throw new NotImplementedException()
+	};
+}
+
+/// <summary>
+/// An implementation of <see cref="DependencyProperty"/> of which the value type is known at compile-time.
+/// </summary>
+/// <typeparam name="T">The property value type.</typeparam>
+public readonly struct TypedDependencyProperty<T> {
+	/// <summary>
+	/// The dependency property.
+	/// </summary>
+	public readonly DependencyProperty Property;
+
+	/// <summary>
+	/// Initialises a new instance of the <see cref="TypedDependencyProperty{T}"/> struct.
+	/// </summary>
+	/// <param name="Property">The property.</param>
+	/// <exception cref="System.InvalidOperationException">The property must inherit from type '<typeparamref name="T"/>'.</exception>
+	public TypedDependencyProperty( DependencyProperty Property ) {
+		if ( Property.PropertyType.IsAssignableFrom(typeof(T)) ) {
+			this.Property = Property;
+		} else {
+			throw new InvalidOperationException($"The property must inherit from type '{typeof(T)}'.");
+		}
+	}
+
+	/// <summary>
+	/// Gets the value of the property.
+	/// </summary>
+	/// <param name="Object">The dependency object.</param>
+	/// <returns>The property value in the given dependency object.</returns>
+	public T Get(DependencyObject Object) => (T)Object.GetValue(Property);
+
+	/// <summary>
+	/// Sets the value of the property on the given dependency object.
+	/// </summary>
+	/// <param name="Object">The dependency object.</param>
+	/// <param name="Value">The new value.</param>
+	public void Set( DependencyObject Object, T Value ) => Object.SetValue(Property, Value);
+
+	/// <summary>
+	/// Performs an <see langword="implicit"/> conversion from <see cref="TypedDependencyProperty{T}"/> to <see cref="DependencyProperty"/>.
+	/// </summary>
+	/// <param name="Typed">The typed property.</param>
+	/// <returns>
+	/// The result of the conversion.
+	/// </returns>
+	public static implicit operator DependencyProperty(TypedDependencyProperty<T> Typed) => Typed.Property;
+
+	/// <summary>
+	/// Performs an explicit conversion from <see cref="DependencyProperty"/> to <see cref="TypedDependencyProperty{T}"/>.
+	/// </summary>
+	/// <param name="Property">The property.</param>
+	/// <returns>
+	/// The result of the conversion.
+	/// </returns>
+	public static explicit operator TypedDependencyProperty<T>( DependencyProperty Property ) => new TypedDependencyProperty<T>(Property);
+
+	/// <inheritdoc />
+	public override string ToString() => $"[{Property.PropertyType.GetTypeName()} {Property.OwnerType.GetTypeName()}.{Property.Name}]";
 }
