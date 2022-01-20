@@ -368,11 +368,118 @@ public static class Extensions {
 	}
 
 	/// <summary>
+	/// Attempts to get the first child of type <typeparamref name="T"/>.
+	/// </summary>
+	/// <typeparam name="T">The child type to search for.</typeparam>
+	/// <param name="Element">The parent.</param>
+	/// <param name="Child">The found child.</param>
+	/// <param name="Recurse">Whether or not to retrieve children of children, etc.</param>
+	/// <returns><see langword="true"/> if a child was found; otherwise <see langword="false"/>.</returns>
+	public static bool TryGetChild<T>( this DependencyObject Element, out T Child, bool Recurse = false ) where T : DependencyObject {
+		T? PossibleChild = FindVisualChildren<T>(Element, Recurse).FirstOrDefault();
+		if ( PossibleChild is null ) {
+			Child = default!;
+			return false;
+		}
+		Child = PossibleChild;
+		return true;
+	}
+
+	/// <summary>
+	/// Finds the visual children following the given type tree.
+	/// </summary>
+	/// <remarks>The final child type does not need to be supplied as it is implied by the given generic type <typeparamref name="T"/>.</remarks>
+	/// <typeparam name="T">The final child type.</typeparam>
+	/// <param name="Element">The parent.</param>
+	/// <param name="ChildTypes">The child types.</param>
+	/// <returns>The final child in the given tree, or <see langword="null"/> if not found.</returns>
+	public static T? FindVisualChildInTree<T>( this DependencyObject Element, params Type[] ChildTypes ) where T : DependencyObject {
+		try {
+			Debug.WriteLine("get method");
+			MethodInfo FVCBaseMethod = typeof(Extensions).GetMethod(nameof(FindVisualChildren), 1, new[] { typeof(DependencyObject), typeof(bool) })!;
+			object? Elm = Element;
+
+			static bool Next( [NotNullWhen(true)] ref object? Elt, MethodInfo FVCBase, Type Type ) {
+				Debug.WriteLine($"get generic for {Type}");
+				MethodInfo FVC = FVCBase.MakeGenericMethod(Type);
+				Debug.WriteLine($"run {FVC} ({Elt?.GetType()}, false)");
+				if ( FVC.Invoke(null, new[] { Elt, false }) is not IEnumerable Elts ) {
+					Debug.WriteLine("\tno return.");
+					return false;
+				}
+				Elts = Elts.ToObjArray();
+				Elt = Elts.FirstOrNull();
+				if ( Elt is null ) {
+					Debug.WriteLine($"\tnot found. ({Elts.Count()} items)");
+					if ( Elts is not null ) {
+						foreach ( object? Itm in Elts ) {
+							Debug.WriteLine($"\t\tother child {Itm}");
+						}
+					}
+					return false;
+				}
+				return true;
+			}
+
+			// ReSharper disable once LoopCanBePartlyConvertedToQuery
+			foreach ( Type Tp in ChildTypes ) {
+				if (!Next(ref Elm, FVCBaseMethod, Tp) ) {
+					Debug.WriteLine("\tnot found.");
+					return null;
+				}
+			}
+			Debug.WriteLine($"\tended with {Elm}");
+			return Next(ref Elm, FVCBaseMethod, typeof(T)) ? (T)Elm : null;
+		} catch (Exception Ex){
+			Debug.WriteLine($"err.: {Ex}");
+			return null;
+		}
+	}
+
+	/// <summary>
+	/// Counts the specified enum.
+	/// </summary>
+	/// <param name="Enum">The enum.</param>
+	/// <returns>The number of items in the collection.</returns>
+	internal static int Count( this IEnumerable Enum ) => Enum switch {
+		Array Arr        => Arr.Length,
+		ICollection Coll => Coll.Count,
+		_                => Enumerable.Count(Enum.Cast<object>())
+	};
+
+	/// <summary>
+	/// Converts the enum to an <see cref="Array"/>.
+	/// </summary>
+	/// <param name="Enum">The enum to iterate.</param>
+	/// <returns>A new <see cref="Array"/> instance.</returns>
+	internal static Array ToObjArray( this IEnumerable Enum ) => Enum.Cast<object>().ToArray();
+
+	/// <summary>
+	/// Gets the first item in the collection, returning <see langword="null"/> if none are found.
+	/// </summary>
+	/// <param name="Enum">The collection to iterate.</param>
+	/// <returns>The first item in the collection, or <see langword="null"/>.</returns>
+	internal static object? FirstOrNull(this IEnumerable Enum) {
+		foreach (object Item in Enum ) {
+			return Item;
+		}
+		return null;
+	}
+
+	/// <summary>
 	/// Retrieves all <see cref="DependencyObject"/> children in the given parent.
 	/// </summary>
 	/// <param name="Element">The parent.</param>
 	/// <param name="Recurse">Whether or not to retrieve children of children, etc.</param>
-	/// <returns>An <see cref="IEnumerable{T}"/> of <see cref="DependencyObject"/> children</returns>
+	/// <returns>An <see cref="IEnumerable{T}"/> of <see cref="DependencyObject"/> children.</returns>
+	public static IEnumerable<DependencyObject> FindVisualChildren( this DependencyObject Element, bool Recurse = true ) => FindVisualChildren<DependencyObject>(Element, Recurse);
+
+	/// <summary>
+	/// Retrieves all <see cref="DependencyObject"/> children in the given parent.
+	/// </summary>
+	/// <param name="Element">The parent.</param>
+	/// <param name="Recurse">Whether or not to retrieve children of children, etc.</param>
+	/// <returns>An <see cref="IEnumerable{T}"/> of <see cref="DependencyObject"/> children.</returns>
 	public static IEnumerable<T> FindVisualChildren<T>( this DependencyObject Element, bool Recurse = true ) where T : DependencyObject {
 		if (TryGetChildrenCount(Element, out int C)) {
 			for (int I = 0; I < C; I++) {
