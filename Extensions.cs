@@ -22,6 +22,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup.Primitives;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 
 #endregion
 
@@ -458,6 +459,69 @@ public static class Extensions {
 	}
 
 	/// <summary>
+	/// Recursively gets all ancestors of the <see cref="DependencyObject"/>.
+	/// </summary>
+	/// <param name="Child">The child to search.</param>
+	/// <returns>The ancestors of the given <paramref name="Child"/> up until the root.</returns>
+	public static IEnumerable<DependencyObject> GetParents( this DependencyObject Child ) {
+		DependencyObject? P = IntGetParent(Child);
+		while ( P is not null ) {
+			yield return P;
+			P = IntGetParent(P);
+		}
+	}
+
+	/// <summary>
+	/// Attempts to get the parent of the <paramref name="Child"/>.
+	/// </summary>
+	/// <param name="Child">The child.</param>
+	/// <returns>The parent object, or <see langword="null"/>.</returns>
+	internal static DependencyObject? IntGetParent( this DependencyObject Child ) {
+		try {
+			return Child switch {
+				FrameworkContentElement FCE => FCE.Parent,
+				Visual V                    => VisualTreeHelper.GetParent(V),
+				Visual3D VThree             => VisualTreeHelper.GetParent(VThree),
+				_                           => null
+			};
+		} catch {
+			return null;
+		}
+	}
+
+	/// <summary>
+	/// Recursively gets all ancestors of the <see cref="DependencyObject"/> of type <typeparamref name="T"/>.
+	/// </summary>
+	/// <typeparam name="T">The type of parents to return.</typeparam>
+	/// <param name="Child">The child to search.</param>
+	/// <returns>The ancestors of the given <paramref name="Child"/> of type <typeparamref name="T"/> (up until the root).</returns>
+	public static IEnumerable<T> GetParents<T>( this DependencyObject Child ) where T : DependencyObject {
+		foreach (DependencyObject Parent in GetParents(Child) ) {
+			if ( Parent is T P ) {
+				yield return P;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Attempts to get the first ancestor of type <typeparamref name="T"/> of the <see cref="DependencyObject"/>.
+	/// </summary>
+	/// <typeparam name="T">The type of parent to find.</typeparam>
+	/// <param name="Child">The child to search.</param>
+	/// <param name="Parent">The first found ancestor of type <typeparamref name="T"/>.</param>
+	/// <returns><see langword="true"/> if a <paramref name="Parent"/> was found; otherwise <see langword="false"/>.</returns>
+	public static bool TryGetParent<T>(this DependencyObject Child, [NotNullWhen(true)] out T Parent) where T : DependencyObject {
+		foreach ( DependencyObject P in GetParents(Child) ) {
+			if ( P is T Pa ) {
+				Parent = Pa;
+				return true;
+			}
+		}
+		Parent = null!;
+		return false;
+	}
+
+	/// <summary>
 	/// Retrieves all <see cref="MarkupProperty"/> values in the given <paramref name="ObjElement"/>.
 	/// </summary>
 	/// <param name="ObjElement">The element to retrieve properties in.</param>
@@ -528,7 +592,6 @@ public static class Extensions {
 		}
 		return null;
 	}
-
 
 	/// <summary>
 	/// Gets the dependency property.
