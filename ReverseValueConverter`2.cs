@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Windows.Data;
 
@@ -45,10 +46,10 @@ public class ReverseValueConverter<TFrom, TTo> : ValueConverter<TTo, TFrom> {
 	public override bool CanReverseWhenNull => Converter.CanForwardWhenNull;
 
 	/// <inheritdoc />
-	public override TFrom? Forward( TTo From, object? Parameter = null, CultureInfo? Culture = null ) => Converter.Reverse(From, Parameter, Culture);
+	public override TFrom? Forward( [DisallowNull] TTo From, object? Parameter = null, CultureInfo? Culture = null ) => Converter.Reverse(From, Parameter, Culture);
 
 	/// <inheritdoc />
-	public override TTo? Reverse( TFrom To, object? Parameter = null, CultureInfo? Culture = null ) => Converter.Forward(To, Parameter, Culture);
+	public override TTo? Reverse( [DisallowNull] TFrom To, object? Parameter = null, CultureInfo? Culture = null ) => Converter.Forward(To, Parameter, Culture);
 
 	/// <inheritdoc />
 	public override TFrom? ForwardWhenNull( object? Parameter = null, CultureInfo? Culture = null ) => Converter.ReverseWhenNull(Parameter, Culture);

@@ -9,6 +9,7 @@
 #region Using Directives
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Windows.Data;
 
@@ -50,7 +51,7 @@ public abstract class ValueConverter<TFrom, TTo> : Reactive, IValueConverter {
 	/// <param name="Parameter">Additional conversion parameters (may be <see langword="null"/>).</param>
 	/// <param name="Culture">The current conversion culture.</param>
 	/// <returns>A converted value of type <typeparamref name="TTo"/>, or <see langword="null"/>.</returns>
-	public abstract TTo? Forward( TFrom From, object? Parameter = null, CultureInfo? Culture = null );
+	public abstract TTo? Forward( [DisallowNull] TFrom From, object? Parameter = null, CultureInfo? Culture = null );
 
 	/// <summary>
 	/// Converts the a <see langword="null"/> 'from value' to a new value of type <typeparamref name="TTo"/> or <see langword="null"/>.
@@ -67,7 +68,7 @@ public abstract class ValueConverter<TFrom, TTo> : Reactive, IValueConverter {
 	/// <param name="Parameter">Additional conversion parameters (may be <see langword="null"/>).</param>
 	/// <param name="Culture">The current conversion culture.</param>
 	/// <returns>A converted value of type <typeparamref name="TFrom"/>, or <see langword="null"/>.</returns>
-	public abstract TFrom? Reverse( TTo To, object? Parameter = null, CultureInfo? Culture = null );
+	public abstract TFrom? Reverse( [DisallowNull] TTo To, object? Parameter = null, CultureInfo? Culture = null );
 
 	/// <summary>
 	/// Converts the a <see langword="null"/> 'to value' to a new value of type <typeparamref name="TFrom"/> or <see langword="null"/>.
