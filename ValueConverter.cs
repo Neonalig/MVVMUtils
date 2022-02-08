@@ -12,10 +12,11 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Windows.Data;
+// ReSharper disable RedundantNullableFlowAttribute
 
 #endregion
 
-namespace MVVMUtils; 
+namespace MVVMUtils;
 
 /// <summary>
 /// A typed value converter with possible support for forwards, forwards (<see langword="null"/>), reverse, and reverse (<see langword="null"/>) conversions.
@@ -51,6 +52,7 @@ public abstract class ValueConverter<TFrom, TTo> : Reactive, IValueConverter {
 	/// <param name="Parameter">Additional conversion parameters (may be <see langword="null"/>).</param>
 	/// <param name="Culture">The current conversion culture.</param>
 	/// <returns>A converted value of type <typeparamref name="TTo"/>, or <see langword="null"/>.</returns>
+	[return: MaybeNull]
 	public abstract TTo? Forward( [DisallowNull] TFrom From, object? Parameter = null, CultureInfo? Culture = null );
 
 	/// <summary>
@@ -59,6 +61,7 @@ public abstract class ValueConverter<TFrom, TTo> : Reactive, IValueConverter {
 	/// <param name="Parameter">Additional conversion parameters (may be <see langword="null"/>).</param>
 	/// <param name="Culture">The current conversion culture.</param>
 	/// <returns>A new value of type <typeparamref name="TTo"/>, or <see langword="null"/>.</returns>
+	[return: MaybeNull]
 	public virtual TTo? ForwardWhenNull( object? Parameter = null, CultureInfo? Culture = null ) => default;
 
 	/// <summary>
@@ -68,6 +71,7 @@ public abstract class ValueConverter<TFrom, TTo> : Reactive, IValueConverter {
 	/// <param name="Parameter">Additional conversion parameters (may be <see langword="null"/>).</param>
 	/// <param name="Culture">The current conversion culture.</param>
 	/// <returns>A converted value of type <typeparamref name="TFrom"/>, or <see langword="null"/>.</returns>
+	[return: MaybeNull]
 	public abstract TFrom? Reverse( [DisallowNull] TTo To, object? Parameter = null, CultureInfo? Culture = null );
 
 	/// <summary>
@@ -76,6 +80,7 @@ public abstract class ValueConverter<TFrom, TTo> : Reactive, IValueConverter {
 	/// <param name="Parameter">Additional conversion parameters (may be <see langword="null"/>).</param>
 	/// <param name="Culture">The current conversion culture.</param>
 	/// <returns>A new value of type <typeparamref name="TFrom"/>, or <see langword="null"/>.</returns>
+	[return: MaybeNull]
 	public virtual TFrom? ReverseWhenNull( object? Parameter = null, CultureInfo? Culture = null ) => default;
 
 	/// <inheritdoc />

@@ -458,6 +458,9 @@ public static class Extensions {
 		} catch (InvalidOperationException) { return false; }
 	}
 
+	/// <inheritdoc cref="IntGetParent(DependencyObject)"/>
+	public static DependencyObject? GetParent( this DependencyObject Child ) => IntGetParent(Child);
+
 	/// <summary>
 	/// Recursively gets all ancestors of the <see cref="DependencyObject"/>.
 	/// </summary>
